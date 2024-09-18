@@ -1,4 +1,4 @@
-:root {
+/* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -28,6 +28,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  width: 100vw !important;
 }
 
 h1 {
@@ -65,4 +66,35 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+} */
+
+/* new */
+
+body {
+  background-color: grey;
+}
+
+li {
+  list-style: none;
+}
+
+.main-container {
+  border: 1px solid black;
+  background-color: grey;
+  margin: 50px auto;
+}
+
+.book-container {
+  display: flex;
+}
+
+.book-grid {
+  border-top: 1px solid grey;
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.book-grid:hover {
+  background-color: lightgray;
 }
