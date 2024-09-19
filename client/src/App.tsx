@@ -1,6 +1,6 @@
 // src/App.tsx
 import React, { useEffect, useState } from 'react';
-import { Book } from './types';
+import { Book, NewBook } from './types';
 import {
   Container,
   Button,
@@ -26,15 +26,30 @@ const App: React.FC = () => {
   // State for selected books
   const [selectedBooks, setSelectedBooks] = useState<Set<number>>(new Set());
 
+  // State for search
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
   useEffect(() => {
     fetchBooks();
   }, []);
 
-  const fetchBooks = async () => {
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      fetchBooks(searchTerm);
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
+
+  const fetchBooks = async (query: string = '') => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:2000/books');
+      const response = await fetch(
+        `http://localhost:2000/books${
+          query ? `?search=${encodeURIComponent(query)}` : ''
+        }`
+      );
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
       }
@@ -61,9 +76,9 @@ const App: React.FC = () => {
     setShowDialog(true);
   };
 
-  const handleSave = async (book: any) => {
-    if (book.id) {
-      // Edit existing book
+  const handleSave = async (book: Book | NewBook): Promise<void> => {
+    if ('id' in book) {
+      // Handle updating an existing book
       try {
         const response = await fetch(`http://localhost:2000/books/${book.id}`, {
           method: 'PUT',
@@ -80,10 +95,14 @@ const App: React.FC = () => {
           prevBooks.map((b) => (b.id === book.id ? book : b))
         );
       } catch (err) {
-        alert('Failed to update the book.');
+        if (err instanceof Error) {
+          <Alert variant="danger">{`Failed to update the book. ${err.message}`}</Alert>;
+        } else {
+          <Alert variant="danger">Failed to update the book.</Alert>;
+        }
       }
     } else {
-      // Add new book
+      // Handle adding a new book
       try {
         const response = await fetch('http://localhost:2000/books', {
           method: 'POST',
@@ -98,7 +117,11 @@ const App: React.FC = () => {
         const newBook: Book = await response.json();
         setBooks((prevBooks) => [...prevBooks, newBook]);
       } catch (err) {
-        alert('Failed to add the book.');
+        if (err instanceof Error) {
+          alert(`Failed to add the book. ${err.message}`);
+        } else {
+          alert('Failed to add the book.');
+        }
       }
     }
   };
@@ -190,9 +213,16 @@ const App: React.FC = () => {
 
   return (
     <Container className="mt-5">
+      {/* Search and Actions */}
+      <h1 className="mb-4">Bookstore Inventory Manager</h1>
       <Row className="mb-4">
-        <Col>
-          <h1>Book List</h1>
+        <Col md={6}>
+          <Form.Control
+            type="text"
+            placeholder="Search by title or author..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </Col>
         <Col className="text-end">
           <div className="d-flex justify-content-end gap-3">
@@ -206,14 +236,15 @@ const App: React.FC = () => {
         </Col>
       </Row>
 
-      <Table striped bordered hover responsive>
+      {/* Books Table */}
+      <Table bordered hover responsive>
         <thead>
           <tr>
             <th>
               <Form.Check
                 type="checkbox"
                 checked={isAllSelected}
-                ref={(input: any) => {
+                ref={(input: HTMLInputElement | null) => {
                   if (input) input.indeterminate = isIndeterminate;
                 }}
                 onChange={(e) => handleSelectAll(e.target.checked)}
@@ -247,6 +278,7 @@ const App: React.FC = () => {
         </tbody>
       </Table>
 
+      {/* Dialog for Add/Edit */}
       <Dialog
         show={showDialog}
         handleClose={() => setShowDialog(false)}
