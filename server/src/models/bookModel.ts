@@ -1,4 +1,3 @@
-// src/models/bookModel.ts
 import pool from '../config/db';
 
 export type Book = {
@@ -76,5 +75,5 @@ export const deleteBooks = async (ids: number[]): Promise<number> => {
   const placeholders = ids.map((_, idx) => `$${idx + 1}`).join(', ');
   const query = `DELETE FROM books WHERE id IN (${placeholders}) RETURNING *;`;
   const result = await pool.query(query, ids);
-  return result.rowCount ?? 0; // Provides a default value if rowCount is null
+  return result.rowCount ?? 0; 
 };

@@ -1,4 +1,3 @@
-// src/config/db.ts
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
 
@@ -14,11 +13,6 @@ const pool = new Pool({
 
 pool.on('connect', () => {
   console.log('Connected to the PostgreSQL database.');
-  console.log('process.env.POSTGRES_USER:', process.env.POSTGRES_USER);
-  console.log('process.env.POSTGRES_HOST:', process.env.POSTGRES_HOST);
-  console.log('process.env.POSTGRES_DB:', process.env.POSTGRES_DB);
-  console.log('process.env.POSTGRES_PASSWORD:', process.env.POSTGRES_PASSWORD);
-  console.log('process.env.POSTGRES_PORT:', process.env.POSTGRES_PORT);
 });
 
 export default pool;

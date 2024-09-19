@@ -1,7 +1,7 @@
-// src/components/Dialog.tsx
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { Book, NewBook } from '../types';
+import AlertMessage from './AlertMessage';
 
 type DialogProps = {
   show: boolean;
@@ -20,6 +20,7 @@ const Dialog: React.FC<DialogProps> = ({
   const [author, setAuthor] = useState<string>('');
   const [price, setPrice] = useState<string>('');
   const [quantity, setQuantity] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialData) {
@@ -33,17 +34,18 @@ const Dialog: React.FC<DialogProps> = ({
       setPrice('');
       setQuantity('');
     }
-  }, [initialData]);
+    setError(null); 
+  }, [initialData, show]);
 
   const handleSubmit = async () => {
-    // Basic validation
+  
     if (
       title.trim() === '' ||
       author.trim() === '' ||
       price.trim() === '' ||
       quantity.trim() === ''
     ) {
-      alert('Please fill in all fields.');
+      setError('Please fill in all fields.');
       return;
     }
 
@@ -51,16 +53,15 @@ const Dialog: React.FC<DialogProps> = ({
     const parsedQuantity = parseInt(quantity, 10);
 
     if (isNaN(parsedPrice) || parsedPrice < 0) {
-      alert('Please enter a valid non-negative number for price.');
+      setError('Please enter a valid non-negative number for price.');
       return;
     }
 
     if (isNaN(parsedQuantity) || parsedQuantity < 0) {
-      alert('Please enter a valid non-negative integer for quantity.');
+      setError('Please enter a valid non-negative integer for quantity.');
       return;
     }
 
-    // Determine if it's a new book or an existing one
     const book: Book | NewBook = initialData
       ? {
           id: initialData.id,
@@ -80,7 +81,7 @@ const Dialog: React.FC<DialogProps> = ({
       await onSave(book);
       handleClose();
     } catch (error) {
-      alert('An error occurred while saving the book.');
+      setError('An error occurred while saving the book.');
     }
   };
 
@@ -90,8 +91,15 @@ const Dialog: React.FC<DialogProps> = ({
         <Modal.Title>{initialData ? 'Edit Book' : 'Add New Book'}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        {error && (
+          <AlertMessage
+            variant="danger"
+            message={error}
+            onClose={() => setError(null)}
+          />
+        )}
         <Form>
-          {/* Title Field */}
+     
           <Form.Group controlId="formBookTitle" className="mb-3">
             <Form.Label>Title</Form.Label>
             <Form.Control
@@ -101,8 +109,7 @@ const Dialog: React.FC<DialogProps> = ({
               onChange={(e) => setTitle(e.target.value)}
             />
           </Form.Group>
-
-          {/* Author Field */}
+    
           <Form.Group controlId="formBookAuthor" className="mb-3">
             <Form.Label>Author</Form.Label>
             <Form.Control
@@ -112,8 +119,7 @@ const Dialog: React.FC<DialogProps> = ({
               onChange={(e) => setAuthor(e.target.value)}
             />
           </Form.Group>
-
-          {/* Price Field */}
+  
           <Form.Group controlId="formBookPrice" className="mb-3">
             <Form.Label>Price ($)</Form.Label>
             <Form.Control
@@ -122,11 +128,10 @@ const Dialog: React.FC<DialogProps> = ({
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               min="0"
-              step="0.01"
+              step="0.1"
             />
           </Form.Group>
 
-          {/* Quantity Field */}
           <Form.Group controlId="formBookQuantity" className="mb-3">
             <Form.Label>Quantity</Form.Label>
             <Form.Control

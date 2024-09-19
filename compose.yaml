@@ -32,16 +32,13 @@ services:
       POSTGRES_USER: 'book_admin'
       POSTGRES_PASSWORD: 'abc'
       POSTGRES_DB: 'books_db'
-      POSTGRES_HOST: 'postgres' # Use the service name as the host
+      POSTGRES_HOST: 'postgres'
       POSTGRES_PORT: 5432
     ports:
       - '2000:2000'
     depends_on:
       - postgres
-    restart: always # Add this line
-    # Remove or comment out the volume mount
-    # volumes:
-    #   - ./server:/usr/src/app
+    restart: always
 
 volumes:
   postgres_data:

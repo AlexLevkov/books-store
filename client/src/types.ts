@@ -12,3 +12,10 @@ export type NewBook = {
   price: number;
   quantity: number;
 };
+
+export type AlertVariant = 'success' | 'danger' | 'warning' | 'info';
+
+export type AlertState = {
+  variant: AlertVariant;
+  message: string;
+} | null;

@@ -1,9 +1,11 @@
-// src/middleware/validation.ts
 import { Request, Response, NextFunction } from 'express';
 import { NewBook } from '../models/bookModel';
 
-// Validate data for creating a new book
-export const validateBook = (req: Request, res: Response, next: NextFunction) => {
+export const validateBook = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { title, author, price, quantity } = req.body as NewBook;
 
   if (
@@ -18,15 +20,18 @@ export const validateBook = (req: Request, res: Response, next: NextFunction) =>
   next();
 };
 
-// Validate data for updating a book
-export const validateBookUpdate = (req: Request, res: Response, next: NextFunction) => {
+export const validateBookUpdate = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { title, author, price, quantity } = req.body;
 
   if (
-    title !== undefined && typeof title !== 'string' ||
-    author !== undefined && typeof author !== 'string' ||
-    price !== undefined && typeof price !== 'number' ||
-    quantity !== undefined && typeof quantity !== 'number'
+    (title !== undefined && typeof title !== 'string') ||
+    (author !== undefined && typeof author !== 'string') ||
+    (price !== undefined && typeof price !== 'number') ||
+    (quantity !== undefined && typeof quantity !== 'number')
   ) {
     return res.status(400).send('Invalid data types for book fields.');
   }
@@ -43,8 +48,11 @@ export const validateBookUpdate = (req: Request, res: Response, next: NextFuncti
   next();
 };
 
-// Validate data for deleting books
-export const validateDelete = (req: Request, res: Response, next: NextFunction) => {
+export const validateDelete = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { ids } = req.body;
 
   if (!Array.isArray(ids) || !ids.every((id: any) => typeof id === 'number')) {

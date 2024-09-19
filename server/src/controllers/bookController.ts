@@ -1,4 +1,3 @@
-// src/controllers/bookController.ts
 import { Request, Response, NextFunction } from 'express';
 import {
   getAllBooks,
@@ -9,7 +8,6 @@ import {
   NewBook,
 } from '../models/bookModel';
 
-// Get all books
 export const fetchBooks = async (req: Request, res: Response, next: NextFunction) => {
   const search = req.query.search as string | undefined;
   try {
@@ -20,7 +18,6 @@ export const fetchBooks = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-// Add a new book
 export const addBook = async (req: Request, res: Response, next: NextFunction) => {
   const newBook: NewBook = req.body;
   try {
@@ -31,7 +28,6 @@ export const addBook = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
-// Update an existing book
 export const modifyBook = async (req: Request, res: Response, next: NextFunction) => {
   const bookId = parseInt(req.params.id, 10);
   const updatedFields: Partial<Omit<Book, 'id'>> = req.body;
@@ -48,7 +44,6 @@ export const modifyBook = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-// Delete multiple books
 export const removeBooks = async (req: Request, res: Response, next: NextFunction) => {
   const { ids } = req.body;
   try {

@@ -1,7 +1,5 @@
-// src/middleware/errorHandler.ts
 import { Request, Response, NextFunction } from 'express';
 
-// Centralized error handling middleware
 export const errorHandler = (
   err: Error,
   req: Request,
